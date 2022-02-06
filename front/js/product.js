@@ -14,43 +14,41 @@ fetch('http://localhost:3000/api/products/'+ id)
      
 .then (function(product) //products objet renvoyé, promise a result
      {   
-         //séléctionne le bloc conteneur ,création img = imageUrl API
-         const itemImg = document.querySelector(".item__img");
-         const img = document.createElement('img');
-         img.setAttribute('src',product.imageUrl);
-         img.setAttribute('alt',product.altTxt);
-         itemImg.appendChild(img);
+          //selection ,création et attribution des elements par l'api
+          //image
+          const itemImg = document.querySelector(".item__img");
+          const img = document.createElement('img');
+          img.setAttribute('src',product.imageUrl);
+          img.setAttribute('alt',product.altTxt);
+           itemImg.appendChild(img);
          
-         //pareil pour le prix
-         document.getElementById("price").textContent = product.price;
-         document.getElementById("description").textContent = product.description;
+          //prix
+          document.getElementById("price").textContent = product.price;
+          document.getElementById("description").textContent = product.description;
          
+          //couleur
           let select  = document.getElementById("colors");
-			// recup couleurs differentes selon kanap
-          const colors = product.colors;
+		const colors = product.colors;
                  
-                  
-		     //add color from specific kanap in combolist  
+          //boucle pour attribuer toutes les couleurs du tableau de l'api correspondant à l'id
 		for (let i = 0; i < colors.length; i += 1) 
           {
                let selectOption = document.createElement('option');
                  	
                selectOption.value = colors[i];
                selectOption.text = colors[i];
+               
                select.add(selectOption);
                
           }
-          
+          //choix quantitée
           let quantityChoose = 0;
-				document.getElementById("quantity").addEventListener("change", function() {
+		document.getElementById("quantity").addEventListener("change", function() {
   					quantityChoose = this.value;
   				});
 				
-				
-          
-          const btnAddCart = document.getElementById("addToCart");
-          btnAddCart.addEventListener
-			     (  "click", function()
+		const btnAddCart = document.getElementById("addToCart");
+          btnAddCart.addEventListener( "click", function()
 				{
 					//add in basket but do not redirect in panier.html 
                          //to redirect click on link in header
