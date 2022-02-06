@@ -1,7 +1,7 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
-
 const id = urlParams.get('id');
+//https://www.sitepoint.com/get-url-parameters-with-javascript/
 
 
 fetch('http://localhost:3000/api/products/'+ id)
@@ -12,13 +12,16 @@ fetch('http://localhost:3000/api/products/'+ id)
            return res.json(); //résultat au format json
      })
      
-.then (function(product)
-     {//products objet renvoyé, promise a result
+.then (function(product) //products objet renvoyé, promise a result
+     {   
+         //séléctionne le bloc conteneur ,création img = imageUrl API
          const itemImg = document.querySelector(".item__img");
          const img = document.createElement('img');
          img.setAttribute('src',product.imageUrl);
+         img.setAttribute('alt',product.altTxt);
          itemImg.appendChild(img);
-
+         
+         //pareil pour le prix
          document.getElementById("price").textContent = product.price;
          document.getElementById("description").textContent = product.description;
          
@@ -34,9 +37,7 @@ fetch('http://localhost:3000/api/products/'+ id)
                  	
                selectOption.value = colors[i];
                selectOption.text = colors[i];
-                      
-                      
-			select.add(selectOption);
+               select.add(selectOption);
                
           }
           
@@ -45,14 +46,16 @@ fetch('http://localhost:3000/api/products/'+ id)
   					quantityChoose = this.value;
   				});
 				
-				console.log(quantityChoose); //mode debug
+				
           
           const btnAddCart = document.getElementById("addToCart");
           btnAddCart.addEventListener
 			     (  "click", function()
 				{
-					//add in basket but do not redirect in panier.html to redirect click on link in header
-					let productInBasket = 
+					//add in basket but do not redirect in panier.html 
+                         //to redirect click on link in header
+					
+                         let productInBasket = 
 				     {
 			        	kanapName: product.name,
 			          kanapId: product._id,
