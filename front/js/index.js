@@ -1,12 +1,19 @@
-const dataApi = fetch('http://localhost:3000/api/products');
+let dataApi = fetch('http://localhost:3000/api/products');
 //requete de type get sur l'ensemble des produits 
      
 dataApi.then (function(res)
 {  //récupérer le résultat de la requête
+  if(res.ok)
     {
       return res.json(); //résultat au format json
     }
 })
+.catch (function(error)
+{  if(error == true) 
+  alert('Erreur lors du chargement des fichiers');
+  console.log(alert);
+})
+
 
 .then(function(products)
 { //products objet renvoyé, promise a result
@@ -34,7 +41,8 @@ dataApi.then (function(res)
       p.textContent = prod.description;
     }
 
-})
+});
+
 
 
 

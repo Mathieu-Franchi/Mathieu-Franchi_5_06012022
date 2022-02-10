@@ -41,7 +41,7 @@ fetch('http://localhost:3000/api/products/'+ id)
                select.add(selectOption);
                
           }
-          //choix quantitée
+          //quantitée
           let quantityChoose = 0;
 		document.getElementById("quantity").addEventListener("change", function() {
   					quantityChoose = this.value;
@@ -50,8 +50,8 @@ fetch('http://localhost:3000/api/products/'+ id)
 		const btnAddCart = document.getElementById("addToCart");
           btnAddCart.addEventListener( "click", function()
 				{
-					//add in basket but do not redirect in panier.html 
-                         //to redirect click on link in header
+					//ajoute dans le panier mais ne redirige pas dans le panier
+                         
 					
                          let productInBasket = 
 				     {
