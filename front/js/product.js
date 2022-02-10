@@ -63,8 +63,8 @@ fetch('http://localhost:3000/api/products/'+ id)
 			          quantity: quantityChoose
 			          };
 			      	
-                         addBasket(productInBasket);
-                         localStorage.setItem("basket",JSON.stringify(basket));
+                         //addBasket(productInBasket);
+                         localStorage.setItem("basket",JSON.stringify(productInBasket));
 			     }
                     );
          
