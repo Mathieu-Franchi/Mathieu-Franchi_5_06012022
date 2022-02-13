@@ -11,7 +11,7 @@ dataApi.then (function(res)
 .catch (function(error)
 {  if(error == true) 
   alert('Erreur lors du chargement des fichiers');
-  console.log(alert);
+  
 })
 
 
