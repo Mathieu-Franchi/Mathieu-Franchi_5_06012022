@@ -46,7 +46,7 @@ fetch('http://localhost:3000/api/products/'+ id)
 		document.getElementById("quantity").addEventListener("change", function() {
   					quantityChoose = this.value;
   				});
-				
+		//au clic ajoute au localstorage	
 		const btnAddCart = document.getElementById("addToCart");
           btnAddCart.addEventListener( "click", function()
 				{
@@ -59,13 +59,28 @@ fetch('http://localhost:3000/api/products/'+ id)
 			          kanapId: product._id,
 			          kanapPrice: product.price,
 					kanapImg: product.imageUrl,
+                         kanapAlt: product.altTxt,
 					kanapColor: select.value,
 			          quantity: quantityChoose
 			          };
 			      	
-                         //addBasket(productInBasket);
+                         
+                         
                          localStorage.setItem("basket",JSON.stringify(productInBasket));
-			     }
-                    );
+                         //convertis le json en string pour le stocker dans le localstorage
+                         
+                         if (quantityChoose == 0)
+                         {
+                              alert('Veuillez choisir une quantitée');
+                              return;
+                         }
+                         if (select.value == "" )
+                         {
+                              alert('Veuillez choisir une couleur');
+                              return;
+                         }
+                         alert('Produit(s) ajouté(s) au panier');
+
+			     });
          
      });

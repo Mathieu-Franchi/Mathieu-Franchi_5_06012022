@@ -1,25 +1,28 @@
-let dataApi = fetch('http://localhost:3000/api/products');
+fetch('http://localhost:3000/api/products')
 //requete de type get sur l'ensemble des produits 
      
-dataApi.then (function(res)
+.then (function response(res)
 {  //récupérer le résultat de la requête
-  if(res.ok)
+  if (res.ok)
     {
       return res.json(); //résultat au format json
     }
+ 
 })
-.catch (function(error)
-{  if(error == true) 
+.catch (function error()
+{  
   alert('Erreur lors du chargement des fichiers');
+  titles = document.querySelector(".titles");
+      h1 = document.createElement('h1');
+      titles.appendChild(h1);
+      h1.textContent = "Erreur lors du chargement des fichiers";
   
 })
-
-
-.then(function(products)
+.then (function cards(products)
 { //products objet renvoyé, promise a result
   for (prod of products) //création de la boucle pour incrémenter l'ensemble de l'api
     { //création des elements 
-      document.getElementById("items");
+      document.getElementById("items"); //selection de la balise html
       a = document.createElement('a');
       article = document.createElement('article');
       img = document.createElement('img');
@@ -40,7 +43,6 @@ dataApi.then (function(res)
       img.alt = prod.altTxt;
       p.textContent = prod.description;
     }
-
 });
 
 
