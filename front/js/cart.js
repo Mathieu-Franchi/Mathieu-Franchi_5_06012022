@@ -1,7 +1,20 @@
 //on récupère les données du localstorage
 let basket = localStorage.getItem("basket");
 let kanap = JSON.parse(basket);
-getBasket();
+function getBasket() {
+    //si le localstorage est vide
+    if (basket == null){
+        return [];
+        
+    }
+    //sinon on retourne sous format JSON le localstorage
+    else {
+        return JSON.parse(basket);
+        
+    }
+}
+
+
 
 //selection de la section "cart__items"
 document.getElementById("cart__items");
@@ -72,7 +85,14 @@ nameH2.textContent = kanap.kanapName;
 deleteItemP.textContent = 'Supprimer';
 quantityP.textContent = 'Qté : ' + kanap.quantity;
 
-
+//Si même ID kanap la quantitée augmente
+function sameId()
+{
+    if(kanapId == kanapId)
+    {
+        quantityP++;
+    }
+}
 //bouton supprimer
 deleteItemP.addEventListener("click", function(){
     function removeFromBasket(productId, productColor){

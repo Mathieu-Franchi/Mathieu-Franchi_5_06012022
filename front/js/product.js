@@ -43,44 +43,50 @@ fetch('http://localhost:3000/api/products/'+ id)
           }
           //quantitée
           let quantityChoose = 0;
-		document.getElementById("quantity").addEventListener("change", function() {
-  					quantityChoose = this.value;
-  				});
-		//au clic ajoute au localstorage	
+		document.getElementById("quantity").addEventListener("change", function() 
+          {
+  			quantityChoose = this.value;
+  		});
+		//fonction au clic sur "ajouter au panier"	
 		const btnAddCart = document.getElementById("addToCart");
           btnAddCart.addEventListener( "click", function()
-				{
-					//ajoute dans le panier mais ne redirige pas dans le panier
-                         
+		{
 					
-                         let productInBasket = 
-				     {
-			        	kanapName: product.name,
+               //création variable de l'objet     
+               let productInBasket = 
+				{
+			          kanapName: product.name,
 			          kanapId: product._id,
 			          kanapPrice: product.price,
 					kanapImg: product.imageUrl,
                          kanapAlt: product.altTxt,
 					kanapColor: select.value,
 			          quantity: quantityChoose
-			          };
+			     };
 			      	
+               //condition choisir une quantitée et une couleur
+               if (select.value == "" && quantityChoose == 0)
+               {
+                    alert('Veuillez choisir une couleur et une quantitée');
+               }
+               else if (select.value == "" )
+               {
+                    alert('Veuillez choisir une couleur');
                          
+               }
+               else if (quantityChoose == 0)
+               {
+                    alert('Veuillez choisir une quantitée');
+               }
+               else 
+               {
+                    alert('Produit(s) ajouté(s) au panier');
+                    localStorage.setItem("basket",JSON.stringify(productInBasket));
+                    //ajoute dans le panier mais ne redirige pas dans le panier
+                    //convertis le json en string pour le stocker dans le localstorage
+               }
                          
-                         localStorage.setItem("basket",JSON.stringify(productInBasket));
-                         //convertis le json en string pour le stocker dans le localstorage
-                         
-                         if (quantityChoose == 0)
-                         {
-                              alert('Veuillez choisir une quantitée');
-                              return;
-                         }
-                         if (select.value == "" )
-                         {
-                              alert('Veuillez choisir une couleur');
-                              return;
-                         }
-                         alert('Produit(s) ajouté(s) au panier');
 
-			     });
+		});
          
      });
