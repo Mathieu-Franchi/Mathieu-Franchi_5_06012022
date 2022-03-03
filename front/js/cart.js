@@ -1,6 +1,8 @@
 //on récupère les données du localstorage
 let basket = localStorage.getItem("basket");
+
 let kanap = JSON.parse(basket);
+
 function getBasket() {
     //si le localstorage est vide
     if (basket == null){
@@ -13,6 +15,8 @@ function getBasket() {
         
     }
 }
+
+
 
 
 
@@ -76,43 +80,48 @@ cartItemContentSettingsQuantity.appendChild(itemQuantity);
 cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
 cartItemContentSettingsDelete.appendChild(deleteItemP);
 
-//attribution dynamique sur le html des valeurs des canapés du localstorage
+//attribution dynamique sur le html des valeurs des kanap du localstorage
 img.src = kanap.kanapImg;
 img.alt = kanap.kanapAlt;
-priceP.textContent = kanap.kanapPrice + ' €';
 colorP.textContent = kanap.kanapColor;
 nameH2.textContent = kanap.kanapName;
 deleteItemP.textContent = 'Supprimer';
 quantityP.textContent = 'Qté : ' + kanap.quantity;
 
-//Si même ID kanap la quantitée augmente
-function sameId()
-{
-    if(kanapId == kanapId)
-    {
-        quantityP++;
-    }
-}
-//bouton supprimer
-deleteItemP.addEventListener("click", function(){
-    function removeFromBasket(productId, productColor){
-        let monpanier = getBasket();
-        
-        for (i = 0; i < monpanier.length; i++) 
-          {
-            if(productColor == monpanier[i].kanapColor && productId ==  monpanier[i].kanapId  )
-            {//si  couleurs et id  sont identiques supression	
-                monpanier.splice(i,1);
-            }
-        }	
-     
-        saveBasket(monpanier);
-    }
-})
-//fonction calcul total de la quantitée des articles dans le panier
-function totalQ(){
+//récupération plus sécurisée du prix du kanap par l'api
+fetch('http://localhost:3000/api/products/'+ kanap.kanapId)
+//requete de type get sur l'url correspondant au produit choisis
 
+.then (function response(res)
+{    //récupérer le résultat de la requête
+           return res.json(); //résultat au format json
+})
+.then (function(idPrice){
+    priceP.textContent = idPrice.price + ' €';
+})
+.catch (function error(){
+    priceP.textContent = "Erreur : impossible d'accéder au serveur";
+    priceP.style.color = 'rgb(201, 40, 43)';
+    priceP.style.fontSize = '23px';
+    
+})
+let kanapQuantity = kanap.quantity;
+
+//Si même ID + même couleur kanap la quantitée augmente
+function sameIdColor()
+{
+    if(kanapId == kanapId && kanapColor == kanapColor )
+    {
+        kanapQuantity++;
+    }
 };
+//bouton supprimer au click
+/*deleteItemP.addEventListener("click", function(){
+    removeItem(basket);
+});*/
+    
+//fonction calcul total de la quantitée des articles dans le panier
+
 
 
 //fonction calcul total du prix des articles dans le panier
@@ -126,8 +135,6 @@ function totalQ(){
         itemQuantity = this.value;
     });
     let totalQuantity = document.getElementById("totalQuantity").textContent = kanap.quantity;
-
-
 
 
 

@@ -36,7 +36,7 @@ fetch('http://localhost:3000/api/products')
       p.textContent = prod.description;
     }
 })
-//en cas d'erreur 
+//en cas d'erreur on affiche une alerte + du texte
 .catch (function error()
 {  
   alert('Erreur lors du chargement des fichiers');

@@ -1,6 +1,11 @@
+function saveBasket(basket){
+    localStorage.setItem("basket", JSON.stringify(basket));
+}
+
 
 function getBasket() {
     //si le localstorage est vide
+    let basket = localStorage.getItem("basket"); 
     if (basket == null){
         return [];
         
@@ -11,6 +16,11 @@ function getBasket() {
         
     }
     
+}
+function addBasket(product){
+    let basket = getBasket();
+    basket.push(product);
+    saveBasket(basket);
 }
 
 
