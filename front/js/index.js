@@ -12,7 +12,7 @@ fetch('http://localhost:3000/api/products')
 
 .then (function cards(products)
 { //products objet renvoyé, promise a result
-  for (prod of products) //création de la boucle pour incrémenter l'ensemble de l'api
+  for (let prod of products) //création de la boucle pour incrémenter l'ensemble de l'api
     { //création des elements 
       document.getElementById("items"); //selection de la balise html
       a = document.createElement('a');

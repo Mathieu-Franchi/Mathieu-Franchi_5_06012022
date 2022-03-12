@@ -7,12 +7,12 @@ const id = urlParams.get('id');
 fetch('http://localhost:3000/api/products/'+ id)
 //requete de type get sur l'url correspondant au produit choisis
 
-.then (function(res)
+.then (function response(res)
 {    //récupérer le résultat de la requête
            return res.json(); //résultat au format json
 })
      
-.then (function(product) //products objet renvoyé, promise a result
+.then (function card(product) //product objet renvoyé, promise a result
 {   
      //selection ,création et attribution des elements par l'api
      //image
@@ -39,7 +39,6 @@ fetch('http://localhost:3000/api/products/'+ id)
           selectOption.text = colors[i];
                
           select.add(selectOption);
-               
      }
      //quantitée
           
@@ -48,24 +47,25 @@ fetch('http://localhost:3000/api/products/'+ id)
      {
   		quantityChoose = this.value;
   	});
-            
-	//fonction au clic sur "ajouter au panier"	
+       
+     //Si il existe déjà mon tableau je le récupère sinon j'en créé un nouveau
+     let arrayInBasket = JSON.parse(localStorage.getItem("basket")) || [];
+     
+     //fonction au clic sur "ajouter au panier"	
 	const btnAddCart = document.getElementById("addToCart");
      btnAddCart.addEventListener( "click", function()
-	{
-				
-          //création variable de l'objet     
-          let productInBasket = 
-		{
-			kanapName: product.name,
-			kanapId: product._id,
-			
-			kanapImg: product.imageUrl,
+      
+     {
+          //Creation de l'objet ici un kanap
+          let kanapInArray = 
+          {    
+               kanapName: product.name,
+               kanapId: product._id,
+               kanapImg: product.imageUrl,
                kanapAlt: product.altTxt,
-			kanapColor: select.value,
-			quantity: quantityChoose
-		};
-                 	
+               kanapColor: select.value,
+               quantity: quantityChoose
+          };
           //condition choisir une quantitée et une couleur
           if (select.value == "" && quantityChoose == 0)
           {
@@ -76,20 +76,29 @@ fetch('http://localhost:3000/api/products/'+ id)
                alert('Veuillez choisir une couleur');
                          
           }
-          else if (quantityChoose == 0)
+          else if (quantityChoose == 0 || quantityChoose <= 0)
           {
                alert('Veuillez choisir une quantitée');
           }
           else 
           {
+               //On injecte le kanap dans le tableau
+		     arrayInBasket.push(kanapInArray);
+               //On envoie le tableau convertis en string dans le localstorage
+               localStorage.setItem("basket",JSON.stringify(arrayInBasket));
                alert('Produit(s) ajouté(s) au panier');
-               localStorage.setItem("basket",JSON.stringify(productInBasket));
+          }    
+          
                
-               //ajoute dans le panier mais ne redirige pas dans le panier
-               //convertis le json en string pour le stocker dans le localstorage
-          }
-              
+     }); //fin fonction onclick ajout panier
 
-	});
-         
+}) //fin fonction récuperation du produit
+.catch (function error()
+{  
+  alert('Erreur lors du chargement des fichiers');
+  titles = document.querySelector(".item__img");
+    h1 = document.createElement('h1');
+    titles.appendChild(h1);
+    h1.textContent = "Erreur lors du chargement des fichiers";
+  
 });
