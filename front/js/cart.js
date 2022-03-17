@@ -1,12 +1,16 @@
-//on récupère les données du localstorage
 function getBasket() 
 {
     let getItem = localStorage.getItem("basket");
     let kanap = JSON.parse(getItem);
     //si le localstorage est vide
-    if (getItem == null || getItem.length == 0){
-        document.querySelector("#cart__items").innerHTML = `
-    <p>Votre panier est vide !</p>`
+    if (getItem == null || getItem.length == 0)
+    {
+        document.getElementById("cart__items");
+        noBasket = document.createElement("h3");
+        cart__items.appendChild(noBasket);
+
+        noBasket.textContent = "Votre panier est vide !";
+        noBasket.setAttribute("style","display: flex; justify-content: center;")
         return [];
         
     }
@@ -16,13 +20,14 @@ function getBasket()
         
     }
 }
-let monPanier = getBasket();
+let myBasket = getBasket();
 
-for (k = 0; k < monPanier.length; k++) //boucle pour chaque objet dans le panier
+for (kanap of myBasket) //boucle pour chaque objet dans le panier
 {
 
     //selection de la section "cart__items"
     document.getElementById("cart__items");
+    
 
     //creation des elements  html dynamiques + ajouts des classes
     article = document.createElement("article");
@@ -83,57 +88,64 @@ for (k = 0; k < monPanier.length; k++) //boucle pour chaque objet dans le panier
     cartItemContentSettingsDelete.appendChild(deleteItemP);
 
     //attribution dynamique sur le html des valeurs des kanap du localstorage
-    img.src = monPanier[k].kanapImg;
-    img.alt = monPanier[k].kanapAlt;
-    colorP.textContent = monPanier[k].kanapColor;
-    nameH2.textContent = monPanier[k].kanapName;
+    img.src = kanap.kanapImg;
+    img.alt = kanap.kanapAlt;
+    colorP.textContent = kanap.kanapColor;
+    nameH2.textContent = kanap.kanapName;
+    itemQuantity.value = kanap.quantity;
+    quantityP.textContent = 'Qté : ';
     deleteItemP.textContent = 'Supprimer';
-    quantityP.textContent = 'Qté : ' + monPanier[k].quantity;
+
+    
+    //récupération du prix du kanap par l'api
+    fetch('http://localhost:3000/api/products/'+ kanap.kanapId)
+        //requete de type get sur l'url correspondant au produit choisis
 
 
-    // //récupération du prix du kanap par l'api
-    // function idPrice()
-    // {
-    //     fetch('http://localhost:3000/api/products/'+ monPanier[k].kanapId)
-    //     //requete de type get sur l'url correspondant au produit choisis
-
-
-    //     .then (function response(res)
-    //     {    //récupérer le résultat de la requête
-    //         if(res.ok)
-    //         {
+        .then (function response(res)
+        {    //récupérer le résultat de la requête
+            if(res.ok)
+            {
             
-    //             return res.json(); //résultat au format json
+                return res.json(); //résultat au format json
             
-    //         }
+            }
         
-    //     })
-    //     .then (function idPrice(data){
+        })
+        .then (function getPrice(data)
+        {
         
-    //     let price = data.price;
-    //     })
+         let price = data.price;
+         priceP.textContent = price + ' €';
+        console.log(price);
+        })
 
 
-    //     .catch (function error(){
-    //     priceP.textContent = "Erreur : impossible d'accéder au serveur";
-    //     priceP.style.color = 'rgb(201, 40, 43)';
-    //     priceP.style.fontSize = '23px';
+        .catch (function error()
+        {
+        priceP.textContent = "Erreur : impossible d'accéder au serveur";
+        priceP.style.color = 'rgb(201, 40, 43)';
+        priceP.style.fontSize = '23px';
         
-    //     });
-    // };
-    // idPrice();
-
+        });
 
         
+    
+
+    
+
+
+
         
-    //priceP.textContent = price + ' €';
+        
+    
         
         
         
     //     //prix total des articles
-    //     let totalPrice = price * monPanier[k].quantity;
+    //     let totalPrice = price * kanap.quantity;
     //     document.getElementById('totalPrice').textContent = totalPrice;
-    //     let kanapQuantity = monPanier[k].quantity;
+    //     let kanapQuantity = kanap.quantity;
 
     //     //Si même ID + même couleur kanap la quantitée augmente
     //     function sameIdColor()
@@ -143,23 +155,18 @@ for (k = 0; k < monPanier.length; k++) //boucle pour chaque objet dans le panier
     //             this.kanapQuantity++;
     //         }
     //     };
-    //     //bouton supprimer au click
-    //     deleteItemP.addEventListener("click", function(){
-    //         let supp = localstorage.removeItem(basket[0]);
-    //         console.log(supp);
-    //     });
+        //bouton supprimer au click
+        // deleteItemP.addEventListener("click", function(){
+        //     let supp = localStorage.removeItem(myBasket[0]);
+        //     console.log(supp);
+        // });
 
-    //     itemQuantity.addEventListener("change", function() {
-    //         itemQuantity = this.value;
-    //     });
-    //     let totalQuantity = document.getElementById("totalQuantity").textContent = monPanier[k].quantity;
+        // itemQuantity.addEventListener("change", function() {
+        //     let foundKanap = myBasket.find(p => p.kanapId == Id && p.kanap.Color == Color);
+        //     foundKanap.quantity = itemQuantity.value;
+        //     localStorage.setItem("basket",JSON.stringify(arrayInBasket));
+        // });
+        // let totalQuantity = document.getElementById("totalQuantity").textContent = kanap.quantity;
     
     
-}// FIN boucle pour chaque objet dans le panier
-
-
-
-
-
-
-
+}// FIN boucle pour chaque kanap dans le panier

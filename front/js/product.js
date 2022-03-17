@@ -21,7 +21,11 @@ fetch('http://localhost:3000/api/products/'+ id)
      img.setAttribute('src',product.imageUrl);
      img.setAttribute('alt',product.altTxt);
      itemImg.appendChild(img);
-         
+     
+     //nom du produit
+     const productName = document.querySelector("#title"); 
+     productName.textContent = product.name;  
+     
      //prix
      document.getElementById("price").textContent = product.price;
      document.getElementById("description").textContent = product.description;
@@ -29,7 +33,6 @@ fetch('http://localhost:3000/api/products/'+ id)
      //couleur
      let select  = document.getElementById("colors");
 	const colors = product.colors;
-                 
      //boucle pour attribuer toutes les couleurs du tableau de l'api correspondant à l'id
 	for (let i = 0; i < colors.length; i += 1) 
      {
@@ -40,22 +43,36 @@ fetch('http://localhost:3000/api/products/'+ id)
                
           select.add(selectOption);
      }
+     
      //quantitée
-          
      let quantityChoose = 0;
 	document.getElementById("quantity").addEventListener("change", function() 
      {
   		quantityChoose = this.value;
   	});
        
-     //Si il existe déjà mon tableau je le récupère sinon j'en créé un nouveau
-     let arrayInBasket = JSON.parse(localStorage.getItem("basket")) || [];
+     //Si il existe déjà un tableau je le récupère sinon j'en créé un nouveau
+     function getBasket() 
+     {
+          let basket = localStorage.getItem("basket");
+          if(basket == null)
+          {
+               return [];
+          }
+          else {
+               return JSON.parse(basket);
+          }
+     }
+     
+     let arrayInBasket = getBasket(); //creation variable de mon panier
+     
      
      //fonction au clic sur "ajouter au panier"	
 	const btnAddCart = document.getElementById("addToCart");
      btnAddCart.addEventListener( "click", function()
       
      {
+          
           //Creation de l'objet ici un kanap
           let kanapInArray = 
           {    
@@ -66,6 +83,34 @@ fetch('http://localhost:3000/api/products/'+ id)
                kanapColor: select.value,
                quantity: quantityChoose
           };
+          
+          // function addBasket()
+          // {
+          //      let foundKanap = arrayInBasket.find(p => p.kanapId == product._id && p.kanapColor == select.value);
+          //      if (foundKanap != undefined)
+          //      {
+          //           foundQuantity = parseInt(foundKanap.quantity); 
+          //           quantityChoose = parseInt(quantityChoose);
+          //           foundQuantity += quantityChoose;
+          //           kanapInArray.quantity = foundQuantity;
+                    
+          //      }
+          //      else 
+          //      {
+
+               
+          //           //On injecte le kanap dans le tableau
+          //           arrayInBasket.push(kanapInArray);
+          //           //On envoie le tableau convertis en string dans le localstorage
+          //           localStorage.setItem("basket",JSON.stringify(arrayInBasket));
+                    
+          //           alert('Produit(s) ajouté(s) au panier');
+          //      }
+               
+               
+          // }
+         
+          
           //condition choisir une quantitée et une couleur
           if (select.value == "" && quantityChoose == 0)
           {
@@ -80,20 +125,22 @@ fetch('http://localhost:3000/api/products/'+ id)
           {
                alert('Veuillez choisir une quantitée');
           }
+          
           else 
           {
-               //On injecte le kanap dans le tableau
-		     arrayInBasket.push(kanapInArray);
-               //On envoie le tableau convertis en string dans le localstorage
-               localStorage.setItem("basket",JSON.stringify(arrayInBasket));
-               alert('Produit(s) ajouté(s) au panier');
+              //On injecte le kanap dans le tableau
+              arrayInBasket.push(kanapInArray);
+              //On envoie le tableau convertis en string dans le localstorage
+              localStorage.setItem("basket",JSON.stringify(arrayInBasket));
+              
+              alert('Produit(s) ajouté(s) au panier');
           }    
           
                
      }); //fin fonction onclick ajout panier
 
 }) //fin fonction récuperation du produit
-.catch (function error()
+.catch (function error() //fonction gestion erreur serveur
 {  
   alert('Erreur lors du chargement des fichiers');
   titles = document.querySelector(".item__img");
