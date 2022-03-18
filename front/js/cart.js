@@ -1,7 +1,7 @@
-function getBasket() 
+function getBasket() //fonction : récupérer le contenu du localstorage
 {
     let getItem = localStorage.getItem("basket");
-    let kanap = JSON.parse(getItem);
+    let json = JSON.parse(getItem);
     //si le localstorage est vide
     if (getItem == null || getItem.length == 0)
     {
@@ -15,19 +15,19 @@ function getBasket()
         
     }
     //sinon on retourne sous format JSON le localstorage
-    else {
-        return kanap;
-        
+    else 
+    {
+        return json;
     }
 }
+
 let myBasket = getBasket();
 
-for (kanap of myBasket) //boucle pour chaque objet dans le panier
+function createCards(kanap,kanapApi) //fonction : creation des elements html dynamiques
 {
-
     //selection de la section "cart__items"
     document.getElementById("cart__items");
-    
+
 
     //creation des elements  html dynamiques + ajouts des classes
     article = document.createElement("article");
@@ -55,10 +55,10 @@ for (kanap of myBasket) //boucle pour chaque objet dans le panier
     cartItemContentSettingsQuantity.classList.add('cart__item__content__settings__quantity');
 
     quantityP = document.createElement("p");
-
+    
     itemQuantity = document.createElement("input");
     itemQuantity.classList.add('itemQuantity');
-    itemQuantity.setAttribute('type','number');
+    itemQuantity.setAttribute('type', 'number');
     itemQuantity.value = 0;
     itemQuantity.min = 1;
     itemQuantity.max = 100;
@@ -87,86 +87,188 @@ for (kanap of myBasket) //boucle pour chaque objet dans le panier
     cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
     cartItemContentSettingsDelete.appendChild(deleteItemP);
 
-    //attribution dynamique sur le html des valeurs des kanap du localstorage
-    img.src = kanap.kanapImg;
-    img.alt = kanap.kanapAlt;
+    //attribution dynamique sur html des valeurs des kanap du localstorage et API
+    //API 
+    nameH2.textContent = kanapApi.name;
+    img.src = kanapApi.imageUrl;
+    img.alt = kanapApi.altTxt;
+    priceP.textContent = kanapApi.price + ' euros';
+    //localstorage
     colorP.textContent = kanap.kanapColor;
-    nameH2.textContent = kanap.kanapName;
     itemQuantity.value = kanap.quantity;
+    //statique
     quantityP.textContent = 'Qté : ';
     deleteItemP.textContent = 'Supprimer';
-
     
-    //récupération du prix du kanap par l'api
+};
+//boucle pour chaque kanap dans localstorage
+myBasket.forEach(kanap => {
+    
+    //récupération des données des kanap par l'api
     fetch('http://localhost:3000/api/products/'+ kanap.kanapId)
-        //requete de type get sur l'url correspondant au produit choisis
+    //requete de type get sur l'url correspondant aux kanaps choisis
 
 
         .then (function response(res)
         {    //récupérer le résultat de la requête
             if(res.ok)
             {
-            
                 return res.json(); //résultat au format json
-            
             }
-        
         })
-        .then (function getPrice(data)
+        //valeurs des kanap appliquées 
+        .then (function getData(kanapApi)
         {
-        
-         let price = data.price;
-         priceP.textContent = price + ' €';
-        console.log(price);
+            createCards(kanap,kanapApi); //vale
         })
 
-
-        .catch (function error()
+        //si erreur 
+        .catch (function ()
         {
-        priceP.textContent = "Erreur : impossible d'accéder au serveur";
-        priceP.style.color = 'rgb(201, 40, 43)';
-        priceP.style.fontSize = '23px';
+            error();
         
         });
 
-        
+});
+
+function error()
+{
+    
+    document.getElementById("cart__items");
+        noBasketApi = document.createElement("h1");
+        cart__items.appendChild(noBasketApi);
+
+        noBasketApi.textContent = "Votre panier est vide !";
+        noBasketApi.setAttribute("style","display: flex; justify-content: center;")
+}
+    
+    
     
 
     
-
-
-
         
+
         
     
-        
-        
-        
-    //     //prix total des articles
-    //     let totalPrice = price * kanap.quantity;
-    //     document.getElementById('totalPrice').textContent = totalPrice;
-    //     let kanapQuantity = kanap.quantity;
-
-    //     //Si même ID + même couleur kanap la quantitée augmente
-    //     function sameIdColor()
-    //     {
-    //         if(kanapId == kanapId && kanapColor == kanapColor )
-    //         {
-    //             this.kanapQuantity++;
-    //         }
-    //     };
-        //bouton supprimer au click
-        // deleteItemP.addEventListener("click", function(){
-        //     let supp = localStorage.removeItem(myBasket[0]);
-        //     console.log(supp);
-        // });
-
-        // itemQuantity.addEventListener("change", function() {
-        //     let foundKanap = myBasket.find(p => p.kanapId == Id && p.kanap.Color == Color);
-        //     foundKanap.quantity = itemQuantity.value;
-        //     localStorage.setItem("basket",JSON.stringify(arrayInBasket));
-        // });
-        // let totalQuantity = document.getElementById("totalQuantity").textContent = kanap.quantity;
     
-    
-}// FIN boucle pour chaque kanap dans le panier
+
+
+
+
+
+
+
+
+
+
+// -------------FORMULAIRE--------------
+// Recuperation des éléments + regex  
+
+// let firstName = document.getElementById('firstName');
+// let regexName = /^[a-z ,.'-]+$/i;
+// let errorFirstName = document.getElementById('firstNameErrorMsg');
+
+// let lastName = document.getElementById('lastName');
+// let errorLastName = document.getElementById('lastNameErrorMsg');
+
+// let address = document.getElementById('address');
+// let regexAddress = /^[a-zA-Z0-9\s,'-]*$/;
+// let errorAddress = document.getElementById('addressErrorMsg');
+
+// let city = document.getElementById('city');
+// let regexCity = /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
+// let errorCity = document.getElementById('cityErrorMsg');
+
+// let email = document.getElementById('email');
+// let regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+// let errorEmail = document.getElementById('emailErrorMsg');
+
+
+// //--------------------------------
+// //Erreur en cas de non respect du regex
+
+// firstName.addEventListener('input', (e) => {
+// 	e.preventDefault();
+// 	if (regexName.test(firstName.value) == false) {
+// 		errorFirstName.innerHTML = "Veuillez saisir votre prénom";
+// 	} else {
+// 		errorFirstName.innerHTML = "";
+// 	}
+// });
+
+// lastName.addEventListener('input', (e) => {
+// 	e.preventDefault();
+// 	if (regexName.test(lastName.value) == false) {
+// 		errorLastName.innerHTML = "Veuillez saisir votre nom";
+// 	} else {
+// 		errorLastName.innerHTML = "";
+// 	}
+// });
+
+// address.addEventListener('input', (e) => {
+// 	e.preventDefault();
+// 	if (regexAddress.test(address.value) == false) {
+// 		errorAddress.innerHTML = "Veuillez saisir une vraie adresse";
+// 	} else {
+// 		errorAddress.innerHTML = "";
+// 	}
+// });
+
+// city.addEventListener('input', (e) => {
+// 	e.preventDefault();
+// 	if (regexCity.test(city.value) == false) {
+// 		errorCity.innerHTML = "Veuillez saisir une vraie ville";
+// 	} else {
+// 		errorCity.innerHTML = "";
+// 	}
+// });
+
+// email.addEventListener('input', (e) => {
+// 	e.preventDefault();
+// 	if (regexEmail.test(email.value) == false) {
+// 		errorEmail.innerHTML = "Email incorrect";
+// 	} else {
+// 		errorEmail.innerHTML = "";
+// 	}
+// });
+
+// let order = document.getElementById('order');
+// //je balaye le productInCart
+// let panier = {};
+// productInCart.forEach(e => {
+// 	panier.push(e.id)
+// });
+// //je recup l'id du bouton pour faire un event
+// order.addEventListener('click', (event) => {
+// 	event.preventDefault();
+// 	let contact = {
+// 		firstName: firstName.value,
+// 		lastName: lastName.value,
+// 		address: address.value,
+// 		city: city.value,
+// 		email: email.value,
+// 	}
+//   //ici je mélange les deux tableaux
+// 	let data = {
+// 		panier,
+// 		contact
+// 	};
+
+// 	// si le client n'a pas bien rempli les champs alors on affiche un message d'erreur
+// 	if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
+// 		alert("Vous n'avez pas bien rempli le formulaire")
+// 		// sinon, j'envoi mon tableau     
+// 	} else {
+// 		fetch(('http://localhost:3000/api/products/order'), {
+// 				method: "POST",
+// 				headers: {
+// 					'Accept': 'application/json',
+// 					'Content-type': 'application/json'
+// 				},
+// 				body: JSON.stringify(data)
+// 			})
+// 			.then(res => {
+// 				return res.json();
+// 			})
+// 	}
+// });
