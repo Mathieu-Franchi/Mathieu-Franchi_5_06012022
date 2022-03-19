@@ -6,7 +6,7 @@ function getBasket() //fonction : récupérer le contenu du localstorage
     if (getItem == null || getItem.length == 0)
     {
         document.getElementById("cart__items");
-        noBasket = document.createElement("h3");
+        noBasket = document.createElement("h2");
         cart__items.appendChild(noBasket);
 
         noBasket.textContent = "Votre panier est vide !";
@@ -32,6 +32,9 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     //creation des elements  html dynamiques + ajouts des classes
     article = document.createElement("article");
     article.classList.add('cart__item');
+    article.setAttribute("data-id", kanap.kanapId);
+    article.setAttribute("data-color", kanap.kanapColor);
+    article.setAttribute("data-price", kanapApi.price);
 
     cartItemImg = document.createElement("div");
     cartItemImg.classList.add('cart__item__img');
@@ -71,7 +74,7 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     deleteItemP = document.createElement("p")
     deleteItemP.classList.add('deleteItem');
 
-    //on injecte les elements (balises) enfant dans les balises parents
+    //on injecte les balises enfant dans les balises parents
     cart__items.appendChild(article);
     article.appendChild(cartItemImg);
     cartItemImg.appendChild(img);
@@ -92,7 +95,7 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     nameH2.textContent = kanapApi.name;
     img.src = kanapApi.imageUrl;
     img.alt = kanapApi.altTxt;
-    priceP.textContent = kanapApi.price + ' euros';
+    priceP.textContent = kanapApi.price + ' €';
     //localstorage
     colorP.textContent = kanap.kanapColor;
     itemQuantity.value = kanap.quantity;
@@ -115,32 +118,30 @@ myBasket.forEach(kanap => {
             {
                 return res.json(); //résultat au format json
             }
+            
         })
-        //valeurs des kanap appliquées 
+        //valeurs des kanap recupérées et appliqués grace au paramètre ultérieur 
         .then (function getData(kanapApi)
         {
-            createCards(kanap,kanapApi); //vale
+            createCards(kanap,kanapApi); 
         })
-
-        //si erreur 
-        .catch (function ()
-        {
-            error();
         
-        });
-
 });
-
 function error()
 {
-    
     document.getElementById("cart__items");
-        noBasketApi = document.createElement("h1");
-        cart__items.appendChild(noBasketApi);
+                
+    noApi = document.createElement("h2");
+    cart__items.appendChild(noApi);
 
-        noBasketApi.textContent = "Votre panier est vide !";
-        noBasketApi.setAttribute("style","display: flex; justify-content: center;")
+    noApi.textContent = "Problème de connexion au serveur, veuillez réessayer ultérieurement";
+    noApi.setAttribute("style","color: black;");
 }
+
+
+
+
+
     
     
     

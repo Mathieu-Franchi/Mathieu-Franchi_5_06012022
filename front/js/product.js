@@ -67,6 +67,7 @@ fetch('http://localhost:3000/api/products/'+ id)
      let arrayInBasket = getBasket(); //creation variable de mon panier
      
      
+     
      //fonction au clic sur "ajouter au panier"	
 	const btnAddCart = document.getElementById("addToCart");
      btnAddCart.addEventListener( "click", function()
@@ -83,33 +84,45 @@ fetch('http://localhost:3000/api/products/'+ id)
                kanapColor: select.value,
                quantity: quantityChoose
           };
-          
-          // function addBasket()
-          // {
-          //      let foundKanap = arrayInBasket.find(p => p.kanapId == product._id && p.kanapColor == select.value);
-          //      if (foundKanap != undefined)
-          //      {
-          //           foundQuantity = parseInt(foundKanap.quantity); 
-          //           quantityChoose = parseInt(quantityChoose);
-          //           foundQuantity += quantityChoose;
-          //           kanapInArray.quantity = foundQuantity;
-                    
-          //      }
-          //      else 
-          //      {
+          function addBasket()
+          {
+               let foundKanap = arrayInBasket.find(p => p.kanapId === product._id && p.kanapColor === select.value);
+               
+               if (!foundKanap)
+               {
 
-               
-          //           //On injecte le kanap dans le tableau
-          //           arrayInBasket.push(kanapInArray);
-          //           //On envoie le tableau convertis en string dans le localstorage
-          //           localStorage.setItem("basket",JSON.stringify(arrayInBasket));
+                    arrayInBasket.push(kanapInArray);
+                    //On envoie le tableau convertis en string dans le localstorage
+                    localStorage.setItem("basket",JSON.stringify(arrayInBasket));
                     
-          //           alert('Produit(s) ajouté(s) au panier');
-          //      }
+                    alert('Produit(s) ajouté(s) au panier');
+                    
+               }
+               else 
+               {
+                    getBasket();                   
+                    console.log(foundKanap);
+                    console.log(foundKanap.quantity);
+                    console.log(typeof(foundKanap.quantity));
+                    console.log(quantityChoose);
+                    console.log(typeof(quantityChoose));
+                    parseInt(foundKanap.quantity);
+                    console.log(typeof(foundKanap.quantity));
+                    parseInt(quantityChoose);
+                    console.log(typeof(quantityChoose));
+                    foundKanap.quantity += quantityChoose
+                    //On envoie le tableau convertis en string dans le localstorage
+               localStorage.setItem("basket",JSON.stringify(arrayInBasket));
+                    
+               alert('Produit(s) ajouté(s) au panier');
+                    
+                    
+               }
                
                
-          // }
-         
+          }
+          
+        
           
           //condition choisir une quantitée et une couleur
           if (select.value == "" && quantityChoose == 0)
@@ -128,12 +141,7 @@ fetch('http://localhost:3000/api/products/'+ id)
           
           else 
           {
-              //On injecte le kanap dans le tableau
-              arrayInBasket.push(kanapInArray);
-              //On envoie le tableau convertis en string dans le localstorage
-              localStorage.setItem("basket",JSON.stringify(arrayInBasket));
-              
-              alert('Produit(s) ajouté(s) au panier');
+             addBasket();
           }    
           
                
