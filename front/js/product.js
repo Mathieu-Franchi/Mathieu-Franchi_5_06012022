@@ -84,11 +84,12 @@ fetch('http://localhost:3000/api/products/'+ id)
                kanapColor: select.value,
                quantity: quantityChoose
           };
+          //fonction si le produit est identique on augmente juste la quantitée de ce même produit
           function addBasket()
           {
                let foundKanap = arrayInBasket.find(p => p.kanapId === product._id && p.kanapColor === select.value);
                
-               if (!foundKanap)
+               if (!foundKanap) 
                {
 
                     arrayInBasket.push(kanapInArray);
@@ -100,21 +101,13 @@ fetch('http://localhost:3000/api/products/'+ id)
                }
                else 
                {
-                    getBasket();                   
-                    console.log(foundKanap);
-                    console.log(foundKanap.quantity);
-                    console.log(typeof(foundKanap.quantity));
-                    console.log(quantityChoose);
-                    console.log(typeof(quantityChoose));
-                    parseInt(foundKanap.quantity);
-                    console.log(typeof(foundKanap.quantity));
-                    parseInt(quantityChoose);
-                    console.log(typeof(quantityChoose));
-                    foundKanap.quantity += quantityChoose
-                    //On envoie le tableau convertis en string dans le localstorage
-               localStorage.setItem("basket",JSON.stringify(arrayInBasket));
                     
-               alert('Produit(s) ajouté(s) au panier');
+                    foundKanap.quantity = parseInt(foundKanap.quantity) + parseInt(quantityChoose)
+                    
+                    //On envoie le tableau convertis en string dans le localstorage
+                    localStorage.setItem("basket",JSON.stringify(arrayInBasket));
+                    
+                    alert('Produit(s) ajouté(s) au panier');
                     
                     
                }

@@ -96,9 +96,11 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     img.src = kanapApi.imageUrl;
     img.alt = kanapApi.altTxt;
     priceP.textContent = kanapApi.price + ' €';
+    
     //localstorage
     colorP.textContent = kanap.kanapColor;
     itemQuantity.value = kanap.quantity;
+    
     //statique
     quantityP.textContent = 'Qté : ';
     deleteItemP.textContent = 'Supprimer';
