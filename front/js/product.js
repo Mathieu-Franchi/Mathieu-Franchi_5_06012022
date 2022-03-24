@@ -77,10 +77,8 @@ fetch('http://localhost:3000/api/products/'+ id)
           //Creation de l'objet ici un kanap
           let kanapInArray = 
           {    
-               kanapName: product.name,
+               
                kanapId: product._id,
-               kanapImg: product.imageUrl,
-               kanapAlt: product.altTxt,
                kanapColor: select.value,
                quantity: quantityChoose
           };
@@ -132,9 +130,11 @@ fetch('http://localhost:3000/api/products/'+ id)
                alert('Veuillez choisir une quantitée');
           }
           
+          
           else 
           {
              addBasket();
+             
           }    
           
                
