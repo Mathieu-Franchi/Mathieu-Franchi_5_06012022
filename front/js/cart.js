@@ -5,6 +5,7 @@ function getBasket() //fonction : récupérer le contenu du localstorage
     //si le localstorage est vide
     if (getItem == null || getItem.length == 0)
     {
+        
         document.getElementById("cart__items");
         noBasket = document.createElement("h2");
         cart__items.appendChild(noBasket);
@@ -107,62 +108,60 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     deleteItemP.textContent = 'Supprimer';
     
     //Bouton supprimer
-    deleteItemP.addEventListener("click",function removeItem(e)
+    function removeItem(e) //fonction supprimer un produit
     {
-        let getItem = JSON.parse(localStorage.getItem("basket"));
-        if (confirm("Voulez-vous supprimer ce produit ?"))
+        
+        let deleteItemConfirm = confirm("Voulez-vous supprimer ce produit ?");
+        if (deleteItemConfirm == true) 
         {
-
             let dataItem = e.target.closest('.cart__item');
             dataItem.remove();
-            //on garde tout les produits différents de l'id et la couleur correspondant
-            suppItem = getItem.filter(supp => supp.kanapId != kanap.kanapId || supp.kanapColor != kanap.kanapColor);
             
-            localStorage.setItem("basket",JSON.stringify(suppItem));//envoie du nouveau tableau dans localstorage
-
-            if(localStorage.getItem("basket").length === 2)
-            {
-                localStorage.clear();
-                location.reload();
-                
-            }
+            //on garde tout les produits différents de l'id et la couleur correspondant du produit selectionner
+            myBasket = myBasket.filter(supp => supp.kanapId != kanap.kanapId || supp.kanapColor != kanap.kanapColor);
+            
+            localStorage.setItem("basket",JSON.stringify(myBasket));//envoie du nouveau tableau dans localstorage
+            
+           
         }
         
-    });
+    };
+    deleteItemP.addEventListener("click", removeItem);
     
     //modification utilisateur
-    itemQuantity.addEventListener("change", function(event) 
-    {
-        
+    itemQuantity.addEventListener("change", function (event) {
 
-        myBasket.forEach((basket,i) => {
+        let dataSetId = event.target.closest('article').dataset.id;
+        let dataSetColor = event.target.closest('article').dataset.color;
+        if (kanap.kanapId === dataSetId && kanap.kanapColor === dataSetColor) 
+        {
+            let modifyQuantity = parseInt(event.target.value);
+
+            parseInt(kanap.quantity);
+            kanap.quantity = modifyQuantity;
+
+            localStorage.setItem("basket",JSON.stringify(myBasket));
             
-            let dataSetId = event.target.closest('article').dataset.id;
-            let dataSetColor = event.target.closest('article').dataset.color;
-              if (basket.kanapId === dataSetId && basket.kanapColor === dataSetColor)
-              {
-                  let modifyQuantity = parseInt(event.target.value);
-                  
-                  parseInt(basket.quantity);
-                  basket.quantity = modifyQuantity;
-                  myBasket[i] = basket;
-                  localStorage.setItem("basket",JSON.stringify(myBasket));
-              }
-        });
-        
-        
-        
-        
-       
-        
-        
-  	});
+            
+        }
+
+    });
     
-};
+    let totalPriceItem = 0;
+    let totalPrice = 0;
+    let totalNumberItem = 0;
+
+    totalNumberItem += kanap.quantity;
+    totalPriceItem = kanap.quantity * kanapApi.price;
+    totalPrice += totalPriceItem;
+    document.querySelector('#totalQuantity').textContent = totalNumberItem;
+    document.querySelector('#totalPrice').textContent = totalPrice;
+};//fin fonction createCards
 
 
 //boucle pour chaque kanap dans localstorage
 myBasket.forEach(kanap => {
+    
     
     //récupération des données des kanap par l'api
     fetch('http://localhost:3000/api/products/'+ kanap.kanapId)
@@ -181,16 +180,6 @@ myBasket.forEach(kanap => {
         .then (function getData(kanapApi)
         {
             createCards(kanap,kanapApi);
-            let totalPriceItem = 0;
-            let totalPrice = 0;
-            let totalNumberItem = 0;
-            
-            totalNumberItem += kanap.quantity;
-            totalPriceItem = kanap.quantity * kanapApi.price;
-            totalPrice += totalPriceItem;
-            document.querySelector('#totalQuantity').innerHTML = `${totalNumberItem}`;
-            document.querySelector('#totalPrice').innerHTML = `${totalPrice}`; 
-            
             
         })
         .catch (function()

@@ -100,7 +100,7 @@ fetch('http://localhost:3000/api/products/'+ id)
                else 
                {
                     
-                    foundKanap.quantity = parseInt(foundKanap.quantity) + parseInt(quantityChoose)
+                    foundKanap.quantity = parseInt(foundKanap.quantity) + parseInt(quantityChoose);
                     
                     //On envoie le tableau convertis en string dans le localstorage
                     localStorage.setItem("basket",JSON.stringify(arrayInBasket));
