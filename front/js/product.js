@@ -77,10 +77,8 @@ fetch('http://localhost:3000/api/products/'+ id)
           //Creation de l'objet ici un kanap
           let kanapInArray = 
           {    
-               kanapName: product.name,
+               
                kanapId: product._id,
-               kanapImg: product.imageUrl,
-               kanapAlt: product.altTxt,
                kanapColor: select.value,
                quantity: quantityChoose
           };
@@ -102,7 +100,8 @@ fetch('http://localhost:3000/api/products/'+ id)
                else 
                {
                     
-                    foundKanap.quantity = parseInt(foundKanap.quantity) + parseInt(quantityChoose)
+                    foundKanap.quantity = JSON.stringify(parseInt(foundKanap.quantity) + parseInt(quantityChoose));
+                    
                     
                     //On envoie le tableau convertis en string dans le localstorage
                     localStorage.setItem("basket",JSON.stringify(arrayInBasket));
@@ -132,9 +131,11 @@ fetch('http://localhost:3000/api/products/'+ id)
                alert('Veuillez choisir une quantitée');
           }
           
+          
           else 
           {
              addBasket();
+             
           }    
           
                

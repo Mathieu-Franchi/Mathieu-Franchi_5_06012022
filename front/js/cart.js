@@ -3,25 +3,33 @@ function getBasket() //fonction : récupérer le contenu du localstorage
     let getItem = localStorage.getItem("basket");
     let json = JSON.parse(getItem);
     //si le localstorage est vide
-    if (getItem == null || getItem.length == 0)
+    
+    if (getItem == null || getItem.length == 0 || json.length == 0)
     {
+        
         document.getElementById("cart__items");
         noBasket = document.createElement("h2");
         cart__items.appendChild(noBasket);
 
         noBasket.textContent = "Votre panier est vide !";
         noBasket.setAttribute("style","display: flex; justify-content: center;")
+        document.querySelector('#totalQuantity').textContent = 0;
+        document.querySelector('#totalPrice').textContent = 0;
         return [];
         
     }
     //sinon on retourne sous format JSON le localstorage
     else 
     {
+        
         return json;
+        
     }
 }
 
+//Mon panier 
 let myBasket = getBasket();
+
 
 function createCards(kanap,kanapApi) //fonction : creation des elements html dynamiques
 {
@@ -105,9 +113,64 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     quantityP.textContent = 'Qté : ';
     deleteItemP.textContent = 'Supprimer';
     
-};
+    //Bouton supprimer
+    function removeItem(e) //fonction supprimer un produit
+    {
+        
+        let deleteItemConfirm = confirm("Voulez-vous supprimer ce produit ?");
+        if (deleteItemConfirm == true) 
+        {
+            let dataItem = e.target.closest('.cart__item');
+            dataItem.remove();
+            
+            //on garde tout les produits différents de l'id et la couleur correspondant du produit selectionner
+            myBasket = myBasket.filter(supp => supp.kanapId != kanap.kanapId || supp.kanapColor != kanap.kanapColor);
+            
+            localStorage.setItem("basket",JSON.stringify(myBasket));//envoie du nouveau tableau dans localstorage
+            if(myBasket.length == 0)
+            {
+                return myBasket = getBasket();
+            }
+           
+        }
+        
+    };
+    deleteItemP.addEventListener("click", removeItem);
+    
+    //modification utilisateur
+    itemQuantity.addEventListener("change", function (event) {
+
+        let dataSetId = event.target.closest('article').dataset.id;
+        let dataSetColor = event.target.closest('article').dataset.color;
+        if (kanap.kanapId === dataSetId && kanap.kanapColor === dataSetColor) 
+        {
+            let modifyQuantity = parseInt(event.target.value);
+
+            parseInt(kanap.quantity);
+            kanap.quantity = JSON.stringify(modifyQuantity);
+            
+            localStorage.setItem("basket",JSON.stringify(myBasket));
+            
+            
+        }
+
+    });
+    
+    let totalPriceItem = 0;
+    let totalPrice = 0;
+    let totalNumberItem = 0;
+
+    totalNumberItem += kanap.quantity;
+    totalPriceItem = kanap.quantity * kanapApi.price;
+    totalPrice += totalPriceItem;
+    document.querySelector('#totalQuantity').textContent = totalNumberItem;
+    document.querySelector('#totalPrice').textContent = totalPrice;
+};//fin fonction createCards
+
+
 //boucle pour chaque kanap dans localstorage
 myBasket.forEach(kanap => {
+    
     
     //récupération des données des kanap par l'api
     fetch('http://localhost:3000/api/products/'+ kanap.kanapId)
@@ -125,20 +188,33 @@ myBasket.forEach(kanap => {
         //valeurs des kanap recupérées et appliqués grace au paramètre ultérieur 
         .then (function getData(kanapApi)
         {
-            createCards(kanap,kanapApi); 
+            createCards(kanap,kanapApi);
+            
+        })
+        .catch (function()
+        {
+            document.getElementById("cart__items");
+                
+            noApi = document.createElement("h2");
+            cart__items.appendChild(noApi);
+
+            noApi.textContent = "Problème de connexion au serveur, veuillez réessayer ultérieurement";
+            noApi.setAttribute("style", "color: black;");
         })
         
 });
-function error()
-{
-    document.getElementById("cart__items");
-                
-    noApi = document.createElement("h2");
-    cart__items.appendChild(noApi);
+function totalPrice(kanap, kanapApi) {
+    let totalPrice = document.querySelector("#totalPrice");
+    let priceTotal = 0;
+    for (let i = 0; i < cart.length; i++) {
+        priceTotal += kanapApi[i].price * kanap[i].quantity;
+    }
+    totalPrice.innerHTML = priceTotal;
+    console.log(priceTotal)
 
-    noApi.textContent = "Problème de connexion au serveur, veuillez réessayer ultérieurement";
-    noApi.setAttribute("style","color: black;");
-}
+};
+      
+    
 
 
 
