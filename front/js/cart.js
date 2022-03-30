@@ -2,7 +2,7 @@ function getBasket() //fonction : récupérer le contenu du localstorage
 {
     let getItem = localStorage.getItem("basket");
     let json = JSON.parse(getItem);
-    //si le localstorage est vide
+    //si le localstorage est vide ou contient un tableau vide
     
     if (getItem == null || getItem.length == 0 || json.length == 0)
     {
