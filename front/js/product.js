@@ -1,11 +1,12 @@
+//je récupère en string le contenu de l'url
 const queryString = window.location.search;
+//je parse le contenu de l'url
 const urlParams = new URLSearchParams(queryString);
+//on récupère l'id dans l'url trouvé grâce à URLSearchParams
 const id = urlParams.get('id');
-//https://www.sitepoint.com/get-url-parameters-with-javascript/
 
-
-fetch('http://localhost:3000/api/products/'+ id)
 //requete de type get sur l'url correspondant au produit choisis
+fetch('http://localhost:3000/api/products/'+ id)
 
 .then (function response(res)
 {    //récupérer le résultat de la requête
@@ -26,7 +27,7 @@ fetch('http://localhost:3000/api/products/'+ id)
      const productName = document.querySelector("#title"); 
      productName.textContent = product.name;  
      
-     //prix
+     //prix et description
      document.getElementById("price").textContent = product.price;
      document.getElementById("description").textContent = product.description;
          

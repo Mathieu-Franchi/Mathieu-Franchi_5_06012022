@@ -199,21 +199,8 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
                     totalPrice += totalPriceItem;
                     document.querySelector('#totalQuantity').textContent = totalNumberItem;
                     document.querySelector('#totalPrice').textContent = totalPrice;
-                    
-                    
                 })
-                .catch (function()
-                {
-                    document.getElementById("cart__items");
-                        
-                    noApi = document.createElement("h2");
-                    cart__items.appendChild(noApi);
-        
-                    noApi.textContent = "Problème de connexion au serveur, veuillez réessayer ultérieurement";
-                    noApi.setAttribute("style", "color: black;");
-                })
-                
-        });
+            });
     }
     //appel de la fonction total prix et quantitée au chargement de la page
     totalPriceQuantity();
@@ -332,15 +319,18 @@ email.addEventListener('input', (e) => {
     }
 });
 
-let order = document.getElementById('order');
 
 let products = [];
-    products[0]  = "107fb5b75607497b96722bda5b504926";
-// myBasket.forEach(kanap => {
-//     products.push(kanap.id)
-// });
+// je met dans mon tableau "products" chaque kanapID de mon panier
+myBasket.forEach(kanap => {
+
+    products.push(kanap.kanapId)
+    
+});
+
 
 //je recup l'id du bouton pour faire un event
+let order = document.getElementById('order');
 order.addEventListener('click', (event) => {
     event.preventDefault();
     let contact = {
@@ -350,18 +340,22 @@ order.addEventListener('click', (event) => {
         city: city.value,
         email: email.value,
     }
-    //ici je mélange les deux tableaux
+    //ici je met les deux tableaux dans un objet "dataClient"
     let dataClient = {
         products,
         contact
     };
     
-
+    
     // si le client n'a pas bien rempli les champs alors on affiche un message d'erreur
     if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
         alert("Vous n'avez pas bien rempli le formulaire")
         // sinon, j'envoi mon tableau     
-    } else {
+    }
+    if (myBasket.length == 0){
+        alert("Veuillez ajouter un article à votre panier")
+    }
+     else {
         fetch('http://localhost:3000/api/products/order', {
             method: "POST",
             headers: {
@@ -374,8 +368,8 @@ order.addEventListener('click', (event) => {
                 return res.json();
             })
             .then(confirm => {
-                // window.location.href = `confirmation.html?orderId=${confirm.orderId}`;
-                console.log(confirm);
+                window.location.href = `confirmation.html?orderId=${confirm.orderId}`;
+                localStorage.clear();
             })
             .catch(error => {
                 return error
