@@ -137,6 +137,10 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
             }
            
         }
+        else {
+            e.target.value = kanap.quantity;
+            totalPriceQuantity();
+        }
         
     };
     deleteItemP.addEventListener("click", removeItem);
@@ -155,12 +159,19 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
             {
                 return removeItem(event);
             }
-            
-            parseInt(kanap.quantity);
-            kanap.quantity = JSON.stringify(modifyQuantity);
-            
-            localStorage.setItem("basket",JSON.stringify(myBasket));//envoie du nouveau tableau
-            
+            if (modifyQuantity >= 100)
+            {
+                alert('La valeur maximum pour ce produit ne doit pas être supérieur à 100');
+                event.target.value = kanap.quantity;
+            }
+            else {
+
+                parseInt(kanap.quantity);
+                kanap.quantity = JSON.stringify(modifyQuantity);
+
+                localStorage.setItem("basket", JSON.stringify(myBasket));//envoie du nouveau tableau
+
+            } 
             
         }
         
@@ -252,29 +263,29 @@ myBasket.forEach(kanap => {
 //     Recuperation des éléments + regex
 
 let firstName = document.getElementById('firstName');
-let regexName = /^[a-z ,.'-]+$/i;
+let regexName = new RegExp (/^[a-z ,.'-]+$/i);
 let errorFirstName = document.getElementById('firstNameErrorMsg');
 
 let lastName = document.getElementById('lastName');
 let errorLastName = document.getElementById('lastNameErrorMsg');
 
 let address = document.getElementById('address');
-let regexAddress = /^[a-zA-Z0-9\s,'-]*$/;
+let regexAddress = new RegExp (/^[a-zA-Z0-9\s,'-]*$/);
 let errorAddress = document.getElementById('addressErrorMsg');
 
 let city = document.getElementById('city');
-let regexCity = /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
+let regexCity = new RegExp (/^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/);
 let errorCity = document.getElementById('cityErrorMsg');
 
 let email = document.getElementById('email');
-let regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+let regexEmail = new RegExp (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g);
 let errorEmail = document.getElementById('emailErrorMsg');
 
 
 
 //Erreur en cas de non respect du regex
 
-firstName.addEventListener('input', (e) => {
+firstName.addEventListener('change', (e) => {
     e.preventDefault();
     if (regexName.test(firstName.value) == false) {
         errorFirstName.innerHTML = "Veuillez saisir votre prénom";
@@ -283,7 +294,7 @@ firstName.addEventListener('input', (e) => {
     }
 });
 
-lastName.addEventListener('input', (e) => {
+lastName.addEventListener('change', (e) => {
     e.preventDefault();
     if (regexName.test(lastName.value) == false) {
         errorLastName.innerHTML = "Veuillez saisir votre nom";
@@ -292,7 +303,7 @@ lastName.addEventListener('input', (e) => {
     }
 });
 
-address.addEventListener('input', (e) => {
+address.addEventListener('change', (e) => {
     e.preventDefault();
     if (regexAddress.test(address.value) == false) {
         errorAddress.innerHTML = "Veuillez saisir une vraie adresse";
@@ -301,7 +312,7 @@ address.addEventListener('input', (e) => {
     }
 });
 
-city.addEventListener('input', (e) => {
+city.addEventListener('change', (e) => {
     e.preventDefault();
     if (regexCity.test(city.value) == false) {
         errorCity.innerHTML = "Veuillez saisir une vraie ville";
@@ -310,7 +321,7 @@ city.addEventListener('input', (e) => {
     }
 });
 
-email.addEventListener('input', (e) => {
+email.addEventListener('change', (e) => {
     e.preventDefault();
     if (regexEmail.test(email.value) == false) {
         errorEmail.innerHTML = "Email incorrect";
@@ -320,42 +331,52 @@ email.addEventListener('input', (e) => {
 });
 
 
-let products = [];
-// je met dans mon tableau "products" chaque kanapID de mon panier
-myBasket.forEach(kanap => {
-
-    products.push(kanap.kanapId)
-    
-});
-
-
 //je recup l'id du bouton pour faire un event
 let order = document.getElementById('order');
 order.addEventListener('click', (event) => {
+    /*empêche le comportement de base d'un submit (envoyer les données par default), 
+    pour traiter celui ci en javascript*/
     event.preventDefault();
-    let contact = {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        address: address.value,
-        city: city.value,
-        email: email.value,
-    }
-    //ici je met les deux tableaux dans un objet "dataClient"
-    let dataClient = {
-        products,
-        contact
-    };
     
-    
-    // si le client n'a pas bien rempli les champs alors on affiche un message d'erreur
-    if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
-        alert("Vous n'avez pas bien rempli le formulaire")
-        // sinon, j'envoi mon tableau     
+    //si mon panier est vide on affiche un message d'erreur       
+    if (myBasket.length == 0) {
+         alert("Veuillez ajouter un article à votre panier");
+         event.preventDefault();
     }
-    if (myBasket.length == 0){
-        alert("Veuillez ajouter un article à votre panier")
+    //si le client n'a pas rempli le formulaire alors on affiche un message d'erreur
+    // else if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
+    //     alert("Vous n'avez pas rempli le formulaire")
+    //     
+    // }
+    //si le client n'a pas bien rempli les champs on affiche un message d'erreur
+     if (regexEmail.test(firstName.value) == false || regexEmail.test(lastName.value) == false || regexEmail.test(address.value) == false || regexEmail.test(city.value) == false || regexEmail.test(email.value) == false) {
+        
+        event.preventDefault();
     }
-     else {
+    else {
+
+        let products = [];
+        // je met dans mon tableau "products" chaque kanapID de mon panier
+        myBasket.forEach(kanap => {
+
+            products.push(kanap.kanapId)
+
+        });
+
+        //objet contact contenant les valeurs de mes champs de textes
+        let contact = {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            address: address.value,
+            city: city.value,
+            email: email.value,
+        }
+        //ici je met l'objet "contact" et le tableau "products" dans un objet "dataClient"
+        let dataClient = {
+            products,
+            contact
+        };
+
         fetch('http://localhost:3000/api/products/order', {
             method: "POST",
             headers: {
@@ -365,14 +386,21 @@ order.addEventListener('click', (event) => {
             body: JSON.stringify(dataClient),
         })
             .then(res => {
-                return res.json();
+                if (res.ok) {
+
+                    return res.json();
+                }
             })
-            .then(confirm => {
-                window.location.href = `confirmation.html?orderId=${confirm.orderId}`;
-                localStorage.clear();
+            .then(data => {
+                //redirige sur la page confirmation avec l'orderId généré dans l'url
+                // window.location.href = `confirmation.html?orderId=${data.orderId}`;
+                console.log(data);
+                //on vide le panier car la commande est passée
+                // localStorage.clear();
             })
             .catch(error => {
-                return error
+                return console.log(error);
             })
+
     }
 });
