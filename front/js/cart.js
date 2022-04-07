@@ -3,34 +3,32 @@ function getBasket() //fonction : récupérer le contenu du localstorage
     let getItem = localStorage.getItem("basket");
     let json = JSON.parse(getItem);
     //si le localstorage est vide ou contient un tableau vide
-    
-    if (getItem == null || getItem.length == 0 || json.length == 0)
-    {
-        
+
+    if (getItem == null || getItem.length == 0 || json.length == 0) {
+
         document.getElementById("cart__items");
         noBasket = document.createElement("h2");
         cart__items.appendChild(noBasket);
 
         noBasket.textContent = "Votre panier est vide !";
-        noBasket.setAttribute("style","display: flex; justify-content: center;")
+        noBasket.setAttribute("style", "display: flex; justify-content: center;")
         document.querySelector('#totalQuantity').textContent = 0;
         document.querySelector('#totalPrice').textContent = 0;
         return [];
-        
+
     }
     //sinon on retourne sous format JSON le localstorage
-    else 
-    {
-        
+    else {
+
         return json;
-        
+
     }
 }
 
 //Mon panier 
 let myBasket = getBasket();
 
-function createCards(kanap,kanapApi) //fonction : creation des elements html dynamiques
+function createCards(kanap, kanapApi) //fonction : creation des elements html dynamiques
 {
     //selection de la section "cart__items"
     document.getElementById("cart__items");
@@ -65,7 +63,7 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     cartItemContentSettingsQuantity.classList.add('cart__item__content__settings__quantity');
 
     quantityP = document.createElement("p");
-    
+
     itemQuantity = document.createElement("input");
     itemQuantity.classList.add('itemQuantity');
     itemQuantity.setAttribute('type', 'number');
@@ -103,64 +101,59 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
     img.src = kanapApi.imageUrl;
     img.alt = kanapApi.altTxt;
     priceP.textContent = kanapApi.price + ' €';
-    
+
     //localstorage
     colorP.textContent = kanap.kanapColor;
     itemQuantity.value = kanap.quantity;
-    
+
     //statique
     quantityP.textContent = 'Qté : ';
     deleteItemP.textContent = 'Supprimer';
-    
+
     //Bouton supprimer
     function removeItem(e) //fonction supprimer un produit
     {
-        
+
         let deleteItemConfirm = confirm("Voulez-vous supprimer ce produit ?");
-        if (deleteItemConfirm == true) 
-        {
+        if (deleteItemConfirm == true) {
             //pour supprimer la div
             let dataItem = e.target.closest('.cart__item');
             dataItem.remove();
-            
+
             //on garde tout les produits différents de l'id et la couleur correspondant du produit selectionner
             myBasket = myBasket.filter(supp => supp.kanapId != kanap.kanapId || supp.kanapColor != kanap.kanapColor);
-            
-            localStorage.setItem("basket",JSON.stringify(myBasket));//envoie du nouveau tableau dans localstorage
-            
+
+            localStorage.setItem("basket", JSON.stringify(myBasket));//envoie du nouveau tableau dans localstorage
+
             // si on supprime celà modifie la quantitée donc on actualise le total quantitée et totalprice
             totalPriceQuantity();
-            
-            if(myBasket.length == 0)
-            {
+
+            if (myBasket.length == 0) {
                 return myBasket = getBasket();
             }
-           
+
         }
         else {
             e.target.value = kanap.quantity;
             totalPriceQuantity();
         }
-        
+
     };
     deleteItemP.addEventListener("click", removeItem);
-    
+
     //modification utilisateur
     itemQuantity.addEventListener("change", function (event) {
 
         let dataSetId = event.target.closest('article').dataset.id;
         let dataSetColor = event.target.closest('article').dataset.color;
-        
-        if (kanap.kanapId === dataSetId && kanap.kanapColor === dataSetColor) 
-        {
-           
+
+        if (kanap.kanapId === dataSetId && kanap.kanapColor === dataSetColor) {
+
             let modifyQuantity = parseInt(event.target.value);
-            if (modifyQuantity === 0)
-            {
+            if (modifyQuantity === 0) {
                 return removeItem(event);
             }
-            if (modifyQuantity >= 100)
-            {
+            if (modifyQuantity >= 100) {
                 alert('La valeur maximum pour ce produit ne doit pas être supérieur à 100');
                 event.target.value = kanap.quantity;
             }
@@ -171,53 +164,46 @@ function createCards(kanap,kanapApi) //fonction : creation des elements html dyn
 
                 localStorage.setItem("basket", JSON.stringify(myBasket));//envoie du nouveau tableau
 
-            } 
-            
+            }
+
         }
-        
+
         // si on modifie la quantitée on actualise le total quantitée et totalprice
         totalPriceQuantity();
-        
+
     });
-    
+
     //Calcul total price et total quantity
-    function totalPriceQuantity()
-    {
+    function totalPriceQuantity() {
         let totalPriceItem = 0;
         let totalPrice = 0;
         let totalNumberItem = 0;
         myBasket.forEach(kanap => {
-    
+
             //récupération des données des kanap par l'api
-            fetch('http://localhost:3000/api/products/'+ kanap.kanapId)
-            //requete de type get sur l'url correspondant aux kanaps choisis
-        
-        
-                .then (function response(res)
-                {    //récupérer le résultat de la requête
-                    if(res.ok)
-                    {
+            fetch('http://localhost:3000/api/products/' + kanap.kanapId)
+                //requete de type get sur l'url correspondant aux kanaps choisis
+
+
+                .then(function response(res) {    //récupérer le résultat de la requête
+                    if (res.ok) {
                         return res.json(); //résultat au format json
                     }
-                    
+
                 })
                 //valeurs des kanap recupérées et appliqués grace au paramètre  
-                .then (function getData(kanapApi)
-                {
-                   
+                .then(function getData(kanapApi) {
+
                     totalNumberItem += parseInt(kanap.quantity);
                     totalPriceItem = parseInt(kanap.quantity) * kanapApi.price;
                     totalPrice += totalPriceItem;
                     document.querySelector('#totalQuantity').textContent = totalNumberItem;
                     document.querySelector('#totalPrice').textContent = totalPrice;
                 })
-            });
+        });
     }
     //appel de la fonction total prix et quantitée au chargement de la page
     totalPriceQuantity();
-
-
-
 };//fin fonction createCards
 
 
@@ -270,63 +256,75 @@ let lastName = document.getElementById('lastName');
 let errorLastName = document.getElementById('lastNameErrorMsg');
 
 let address = document.getElementById('address');
-let regexAddress = new RegExp (/^[a-zA-Z0-9\s,'-]*$/);
+let regexAddress = new RegExp(/^[a-zA-Z0-9 ]+$/);
 let errorAddress = document.getElementById('addressErrorMsg');
 
 let city = document.getElementById('city');
-let regexCity = new RegExp (/^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/);
+let regexCity = new RegExp(/^[a-zA-Z ]+$/);
 let errorCity = document.getElementById('cityErrorMsg');
 
 let email = document.getElementById('email');
-let regexEmail = new RegExp (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g);
+let regexEmail = new RegExp (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i);
 let errorEmail = document.getElementById('emailErrorMsg');
 
 
 
 //Erreur en cas de non respect du regex
-
-firstName.addEventListener('change', (e) => {
+firstName.addEventListener('input', (e) => {
     e.preventDefault();
+    
     if (regexName.test(firstName.value) == false) {
         errorFirstName.innerHTML = "Veuillez saisir votre prénom";
+        
     } else {
         errorFirstName.innerHTML = "";
+        return true;
     }
 });
 
-lastName.addEventListener('change', (e) => {
+
+lastName.addEventListener('input', (e) => {
     e.preventDefault();
+    
     if (regexName.test(lastName.value) == false) {
         errorLastName.innerHTML = "Veuillez saisir votre nom";
     } else {
         errorLastName.innerHTML = "";
+        return true;
     }
 });
 
-address.addEventListener('change', (e) => {
+address.addEventListener('input', (e) => {
     e.preventDefault();
+    
     if (regexAddress.test(address.value) == false) {
         errorAddress.innerHTML = "Veuillez saisir une vraie adresse";
     } else {
         errorAddress.innerHTML = "";
+        return true;
     }
 });
 
-city.addEventListener('change', (e) => {
+city.addEventListener('input', (e) => {
     e.preventDefault();
+    
+    
     if (regexCity.test(city.value) == false) {
         errorCity.innerHTML = "Veuillez saisir une vraie ville";
     } else {
         errorCity.innerHTML = "";
+        return true;
     }
 });
 
-email.addEventListener('change', (e) => {
+email.addEventListener('input', (e) => {
     e.preventDefault();
+    
     if (regexEmail.test(email.value) == false) {
         errorEmail.innerHTML = "Email incorrect";
     } else {
         errorEmail.innerHTML = "";
+        return true;
     }
 });
 
@@ -339,20 +337,31 @@ order.addEventListener('click', (event) => {
     event.preventDefault();
     
     //si mon panier est vide on affiche un message d'erreur       
-    if (myBasket.length == 0) {
+    if (myBasket.length == 0 || JSON.parse(localStorage.getItem("basket")).length == 0) 
+    {
          alert("Veuillez ajouter un article à votre panier");
          event.preventDefault();
+         return;
     }
-    //si le client n'a pas rempli le formulaire alors on affiche un message d'erreur
-    // else if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
-    //     alert("Vous n'avez pas rempli le formulaire")
-    //     
-    // }
+    
+    //si le client n'a pas rempli le formulaire alors on affiche un message d'erreur   
+    let allInput = document.querySelectorAll("input");
+
+    for (input in allInput) {
+        if (allInput[input].value == '') {
+            alert("Vous n'avez pas rempli le formulaire");
+            return;
+        }
+    }
+    
     //si le client n'a pas bien rempli les champs on affiche un message d'erreur
-     if (regexEmail.test(firstName.value) == false || regexEmail.test(lastName.value) == false || regexEmail.test(address.value) == false || regexEmail.test(city.value) == false || regexEmail.test(email.value) == false) {
-        
+    if (regexName.test(firstName.value) == false || regexName.test(lastName.value) == false || regexAddress.test(address.value) == false || regexCity.test(city.value) == false || regexEmail.test(email.value) == false)
+    { 
+        alert("Veuillez remplir le formulaire avec des données valide");
         event.preventDefault();
+        
     }
+
     else {
 
         let products = [];
@@ -393,13 +402,12 @@ order.addEventListener('click', (event) => {
             })
             .then(data => {
                 //redirige sur la page confirmation avec l'orderId généré dans l'url
-                // window.location.href = `confirmation.html?orderId=${data.orderId}`;
-                console.log(data);
+                window.location.href = `confirmation.html?orderId=${data.orderId}`;
                 //on vide le panier car la commande est passée
-                // localStorage.clear();
+                localStorage.clear();
             })
-            .catch(error => {
-                return console.log(error);
+            .catch(() => {
+               alert("Erreur serveur , veuillez réessayer ultérieurement"); 
             })
 
     }
